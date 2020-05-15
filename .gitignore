@@ -5,3 +5,7 @@ data
 */.ipynb_checkpoints/*
 
 fastai
+
+s3/__pycache__/
+s3/results/
+s3/utils/__pycache__/
