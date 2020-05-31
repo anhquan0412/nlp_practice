@@ -9,3 +9,5 @@ fastai
 s3/__pycache__/
 s3/results/
 s3/utils/__pycache__/
+s4/__pycache__/
+s4/outputs/*

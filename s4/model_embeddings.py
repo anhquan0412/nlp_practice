@@ -31,7 +31,7 @@ class ModelEmbeddings(nn.Module):
         self.source = None
         self.target = None
 
-        src_pad_token_idx = vocab.src['<pad>']
+        src_pad_token_idx = vocab.src['<pad>'] # word2idx dictionary
         tgt_pad_token_idx = vocab.tgt['<pad>']
 
         ### YOUR CODE HERE (~2 Lines)
@@ -51,7 +51,8 @@ class ModelEmbeddings(nn.Module):
         ### Use the following docs to properly initialize these variables:
         ###     Embedding Layer:
         ###         https://pytorch.org/docs/stable/nn.html#torch.nn.Embedding
-        
+        self.source = nn.Embedding(len(vocab.src),embed_size,padding_idx=src_pad_token_idx)
+        self.target = nn.Embedding(len(vocab.tgt),embed_size,padding_idx=tgt_pad_token_idx)
 
         ### END YOUR CODE
 
