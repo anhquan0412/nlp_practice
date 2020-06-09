@@ -11,3 +11,5 @@ s3/results/
 s3/utils/__pycache__/
 s4/__pycache__/
 s4/outputs/*
+s4/model.bin
+s4/model.bin.optim
