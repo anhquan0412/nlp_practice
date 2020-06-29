@@ -16,3 +16,5 @@ s4/model.bin.optim
 
 fastai2_nlp/.ipynb_checkpoints
 fastai2_nlp/fastai2
+fastai2_nlp/tmp
+fastai2_nlp/models
