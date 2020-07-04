@@ -18,3 +18,8 @@ fastai2_nlp/.ipynb_checkpoints
 fastai2_nlp/fastai2
 fastai2_nlp/tmp
 fastai2_nlp/models
+
+s5/__pycache__/
+s5/results/
+s5/utils/__pycache__/
+s5/__MACOSX
