@@ -23,3 +23,5 @@ s5/__pycache__/
 s5/results/
 s5/utils/__pycache__/
 s5/__MACOSX
+s5/model.bin
+s5/model.bin.optim

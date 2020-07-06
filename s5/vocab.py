@@ -156,7 +156,8 @@ class VocabEntry(object):
         ###     - Use `pad_sents_char()` from utils.py, which pads all words to max_word_length of all words in the batch,
         ###       and pads all sentences to max length of all sentences in the batch. Read __init__ to see how to get
         ###       index of character-padding token
-        sents_var = torch.Tensor(pad_sents_char(list_of_indices,self.char_pad)).permute(1,0,2)
+        sents_var = torch.tensor(pad_sents_char(list_of_indices,self.char_pad),dtype=torch.long, device=device).permute(1,0,2)
+        sents_var = sents_var.contiguous()
         ###     - Connect these two parts to convert the resulting padded sentences to a torch tensor.
         return sents_var
         ### HINT:

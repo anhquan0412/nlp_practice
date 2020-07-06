@@ -32,26 +32,59 @@ class ModelEmbeddings(nn.Module):
         """
         Init the Embedding layer for one language
         @param word_embed_size (int): Embedding size (dimensionality) for the output word
+        aka e_word
+        
         @param vocab (VocabEntry): VocabEntry object. See vocab.py for documentation.
 
         Hints: - You may find len(self.vocab.char2id) useful when create the embedding
         """
         super(ModelEmbeddings, self).__init__()
-
-        ### YOUR CODE HERE for part 1h
-
-        ### END YOUR CODE
-
-    def forward(self, input):
+        self.word_embed_size = word_embed_size
+        self.vocab = vocab
+        self.e_char = 50
+        self.char_emb = nn.Embedding(len(vocab.char2id),self.e_char,padding_idx=vocab.char_pad)
+        self.highway = Highway(self.word_embed_size)
+        self.cnn = CNN(self.e_char,self.word_embed_size)
+        self.dropout = nn.Dropout(p=0.3)
+        
+    def forward(self, x_padded):
         """
         Looks up character-based CNN embeddings for the words in a batch of sentences.
-        @param input: Tensor of integers of shape (sentence_length, batch_size, max_word_length) where
+        @param x_padded: Tensor of integers of shape (sentence_length, batch_size, max_word_length) where
             each integer is an index into the character vocabulary
-
-        @param output: Tensor of shape (sentence_length, batch_size, word_embed_size), containing the
+        @param x_word_emb: Tensor of shape (sentence_length, batch_size, word_embed_size), containing the
             CNN-based embeddings for each word of the sentences in the batch
         """
-        ### YOUR CODE HERE for part 1h
+        
+        
+#         raw_input x_padded: (max_sentence_length,bs,max_word_length aka m)
+#             - each integer is an index into the character vocabulary
+#             - this should be output of to_input_tensor_char()
+        
+#         --char_emb()-->
+#         x_emb: (max_sentence_length,bs,max_word_length,e_char)
+#             - with e_char is size of character embedding.      
+        x_emb = self.char_emb(x_padded)
+        
+#         --reshape()-->
+#         x_reshaped: (max_sentence_length,bs,e_char,max_word_length)
+        x_reshaped = x_emb.permute(0,1,3,2)
+    
+#         --cnn()-->
+#         x_conv: (max_sentence_length,bs,e_word,max_word_length-k+1)
+#             - with k is kernel size,e_word is the desired word embedding size
+#             - do a loop for each sentence
+#         --relu_and_globalmaxpool()-->
+#         x_conv_out: (max_sentence_length,bs,e_word)
+        x_conv_out = self.cnn(x_reshaped)
 
-        ### END YOUR CODE
+#         --high_way()-->
+#         x_highway: (max_sentence_length,bs,e_word)
+        x_highway = self.highway(x_conv_out)
+#         --dropout()-->
+#         x_word_emb: (max_sentence_length,bs,e_word)
+        x_word_emb = self.dropout(x_highway)
+        return x_word_emb
 
+        
+        
