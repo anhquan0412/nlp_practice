@@ -133,11 +133,22 @@ class NMT(nn.Module):
         scores = target_gold_words_log_prob.sum() # mhahn2 Small modification from A4 code.
 
         if self.charDecoder is not None:
-            max_word_len = target_padded_chars.shape[-1]
 
-            target_words = target_padded[1:].contiguous().view(-1)
-            target_chars = target_padded_chars[1:].view(-1, max_word_len)
-            target_outputs = combined_outputs.view(-1, 256)
+            # note that max_sentence_length is the number of words for the longest sentence
+            # max_word_length is the number of characters for the longest word (of the entire batch)
+            # and bs is the number of sentences in 1 batch
+            
+            # target_padded_chars: tensor of (max_sentence_length, bs, max_word_length)
+            max_word_len = target_padded_chars.shape[-1]
+            
+            # target_padded: tensor of (max_sent_length, bs)
+            target_words = target_padded[1:].contiguous().view(-1) # (max_sent_length * bs), this is not used
+            
+            target_chars = target_padded_chars[1:].view(-1, max_word_len) # (max_sent_length * bs, max_word_length). 
+            # Note that we skip the first word of each sentence, which is a <sentence start> token
+            
+            # combined_outputs: tensor shape (tgt_len, bs, hidden size)
+            target_outputs = combined_outputs.view(-1, 256) # (max_sent_length * bs, hidden size)
 
             target_chars_oov = target_chars  # torch.index_select(target_chars, dim=0, index=oovIndices)
             rnn_states_oov = target_outputs  # torch.index_select(target_outputs, dim=0, index=oovIndices)
