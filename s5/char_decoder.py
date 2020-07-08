@@ -95,7 +95,11 @@ class CharDecoder(nn.Module):
 
         @param initialStates (tuple(Tensor, Tensor)): initial internal state of the LSTM, 
         a tuple of two tensors of size (1, batch_size, hidden_size)
-        
+        NOTE that this is the new hidden state h (the combined output vector, which is AN ACTIVATION) 
+            which is selectively chosen b/c word-model produces UNK tokens at these position
+        Our job is to create a matrix of size (bs,max_length) initialized with start_of_word token
+        and run it recursively through CharDecoderLSTM to generate a list of words (with length bs) 
+        to replace these UNKs
         
         @param device: torch.device (indicates whether the model is on CPU or GPU)
         @param max_length (int): maximum length of words to decode
@@ -106,21 +110,20 @@ class CharDecoder(nn.Module):
         """
         bs = initialStates[0].shape[1]
         dec_hidden = initialStates
-        inp = torch.LongTensor([[self.target_vocab.start_of_word]*bs], 
-                           device=device) # shape (1,bs). 
+        inp = torch.LongTensor([[self.target_vocab.start_of_word]*bs]).to(device) # shape (1,bs). 
         
         # Bptt is always 1 for inp (even for the loop below) instead of increment from 1
         # because we already update dec_hidden for LSTM
         # Otherwise, we will feed (1,bs) then (2,bs) ... (max_length-1,bs) into LSTM without
         # feeding dec_hidden. This wastes computation however.
         
-        results=torch.LongTensor([[0]*bs],device=device) # (1,bs)
+        results=torch.LongTensor([[0]*bs]).to(device) # (1,bs)
         for s in range(max_length):
             scores,dec_hidden = self.forward(inp,dec_hidden) #(1,bs,vocab_size)
             inp = F.softmax(scores,dim=2).argmax(dim=2) # (1,bs)
-            # print(f'{s}: {inp}')
-            # BIG FAT TODO: at s=0, even though inp is the same: 1,bs vector filled with start_of_word index
-            # output vector (not sure at h or after blue-transformation) (1,bs) have different values. Pls do a LSTM check in notebook
+            # at s=0, even though inp is the same (1,bs vector filled with start_of_word index)
+            # new inp (1,bs) will have different values because the  values are determined by dec_hidden, not the LSTM itself 
+            # dec_hidden has shape (1,bs,hidden_size), so basically like running a NN linear layer
             results = torch.cat([results,inp.detach()])
 
         decodedWords = []
