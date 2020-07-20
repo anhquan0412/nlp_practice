@@ -332,6 +332,11 @@ class NMT(nn.Module):
         ### END YOUR CODE FROM ASSIGNMENT 4
 
         # Set e_t to -inf where enc_masks has 1
+        # So that when do softmax on these paddings of this sentence, the attribution score will be 0 (e^-inf = 0)
+        # example: sentence [il,a,m,entarte,<PAD>] (max source length = 5) will have enc_masks [0,0,0,0,1]
+        # and with attribution score (pre_softmax) e_t such as [3,-1,0,-2,5], 
+        # 5 will be such a high attribution score for a meaningless padding
+        # so we need to neutralize it by applying mask on so that e_t will be [3,-1,0,-2,-inf]
         if enc_masks is not None:
             e_t.data.masked_fill_(enc_masks.bool(), -float('inf'))
 
