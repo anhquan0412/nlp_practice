@@ -14,10 +14,10 @@ s4/outputs/*
 s4/model.bin
 s4/model.bin.optim
 
-fastai2_nlp/.ipynb_checkpoints
-fastai2_nlp/fastai2
-fastai2_nlp/tmp
-fastai2_nlp/models
+fastai2_huggingface_nlp/.ipynb_checkpoints
+fastai2_huggingface_nlp/fastai2
+fastai2_huggingface_nlp/tmp
+fastai2_huggingface_nlp/models
 
 s5/__pycache__/
 s5/results/
