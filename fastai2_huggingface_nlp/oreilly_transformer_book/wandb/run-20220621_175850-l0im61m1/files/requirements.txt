@@ -125,7 +125,7 @@ neptune-client==0.4.126
 nest-asyncio==1.4.3
 networkx==2.5
 ninja==1.10.0.post2
-notebook==6.1.5
+notebook==6.4.12
 numba==0.52.0
 numpy==1.22.3
 nvidia-ml-py3==7.352.0
