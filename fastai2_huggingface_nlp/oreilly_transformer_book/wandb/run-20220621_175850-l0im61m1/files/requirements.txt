@@ -162,7 +162,7 @@ pycparser==2.20
 pydeprecate==0.3.2
 pydicom==2.1.1
 pygments==2.7.3
-pyjwt==1.7.1
+pyjwt==2.4.0
 pykwalify==1.5.2
 pyparsing==2.4.7
 pyrsistent==0.17.3
